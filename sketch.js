@@ -46,8 +46,8 @@ function draw() {
   //background(0);
   //background(0, 0, 20)
 
-  //background(lerpColor(color(0, 0, 20), color(222, 118, 38), happiness));
-  background(0, 0, 0)
+  background(lerpColor(color(0, 0, 20), color(222, 118, 38), happiness));
+  //background(0, 255, 0)
   noStroke();
   textAlign(CENTER);
 
@@ -167,8 +167,14 @@ function draw() {
       //   text('☹'/* 'ￗ﹏ￗ' *//* '^o^' */, skeleton.head.pos.x, skeleton.head.pos.y + (skeleton.head.size / 10));
       // }
 
-
-      text('^o^', skeleton.head.pos.x, skeleton.head.pos.y);
+      if(happiness < 0.2) {
+        textSize(skeleton.head.size * 1.1);
+        text('☹', skeleton.head.pos.x, skeleton.head.pos.y + (skeleton.head.size / 10));
+      }
+      else if(happiness < 0.4) text('>_<', skeleton.head.pos.x, skeleton.head.pos.y);
+      else if(happiness < 0.6) text('0_0', skeleton.head.pos.x, skeleton.head.pos.y);
+      else if(happiness < 0.8) text('0ᴗ0', skeleton.head.pos.x, skeleton.head.pos.y);
+      else(text('^o^', skeleton.head.pos.x, skeleton.head.pos.y));
     }
 
     pop();
