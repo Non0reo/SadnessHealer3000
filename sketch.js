@@ -7,7 +7,7 @@ let selectedVideo = 0;
 
 let happiness = 0;
 
-const armSize = 1.4;
+const armSize = 1;
 const upperArmSize = 1;
 const lerpSpeed = 0.2;
 
@@ -32,7 +32,7 @@ function setup() {
   fill('white');
 
   // load videos
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 4; i++) {
     videos[i] = createVideo(['videos/' + i + '.mp4']);
     videos[i].hide();
   }
@@ -49,6 +49,7 @@ function draw() {
   background(lerpColor(color(0, 0, 20), color(222, 118, 38), happiness));
   //background(0, 255, 0)
   noStroke();
+  textAlign(CENTER);
 
 
   if(CAMERA_VIEW) {
@@ -180,19 +181,45 @@ function draw() {
   
   } //else skeleton = defaultSkeleton();
 
-  textSize(60);
-  //text('Difference: ' + floor(difference), 400, 100);
-  text('Happiness: ' + floor(happiness * 100), 400, 100);
-    
+  //textSize(60);
+  //fill(255);
+  //text('Difference: ' + floor(difference), 400, 200);
+  //text('Happiness: ' + floor(happiness * 100), 400, 100);
+  
+  const barHeight = 100;
+  const barVolume = -map(happiness, 0, 1, 0, height - barHeight * 2);
 
-  // Calculate the y position to center the video on the y axis
-  // const videoY = (height - (video.height * VIDEO_SCALE)) / 2;
-  // image(video, 0, videoY, video.width * VIDEO_SCALE, video.height * VIDEO_SCALE, 0, 0, video.width, video.height);
+  textSize(20);
+  text('Happiness', width - 110, height - barHeight + 30);
+
+  fill(0, 0, 20);
+  stroke('white');
+  strokeWeight(4);
+  rect(width - 150, barHeight, 80, height - barHeight * 2);
+
+  fill(lerpColor(color(255, 0, 0), color(0, 255, 0), happiness));;
+  rect(width - 150, height - barHeight, 80, barVolume);
+
+
+
+  textAlign(RIGHT);
+  textSize(26);
+  strokeWeight(1);
+  fill('white');
+  let message;
+  if(happiness < 0) message = '100% depressed';
+  else if(happiness < 0.2) message = 'Too sad to compute';
+  else if(happiness < 0.4) message = 'Sad';
+  else if(happiness < 0.6) message = 'ok...';
+  else if(happiness < 0.8) message = 'Happy';
+  else if(happiness < 1) message = 'Very happy!';
+  else message = 'OMG!!!!';
+  text(message, width - 170, happiness > 1 ? barHeight : (height - barHeight + barVolume));
+
 
   if(selectedVideo !== -1) {
-    const VIDEO_SCALE = 0.4;
+    const VIDEO_SCALE = 0.6;
     let video = videos[selectedVideo];
-    //using the code above, make the video centered on the y axis
     const videoY = (height - (video.height * VIDEO_SCALE)) / 2;
     image(video, 0, videoY, video.width * VIDEO_SCALE, video.height * VIDEO_SCALE, 0, 0, video.width, video.height);
   }
@@ -214,34 +241,25 @@ function drawSkeletonLine(bodyPart) {
 function keyPressed() {
   difference = 0;
   happiness = 0;
+  for (let i = 0; i < videos.length; i++) {
+    videos[i].stop();
+  }
+  selectedVideo = -1;
   
   if (key == 'q') {
-    //stop every video
-    for (let i = 0; i < videos.length; i++) {
-      videos[i].stop();
-    }
-    selectedVideo = -1;
+    CHANGE_HAPPINESS = !CHANGE_HAPPINESS;
   }
   if (key == '0') {
-    videos[0].play();
-    selectedVideo = 0;
-    CHANGE_HAPPINESS = true;
-    setTimeout(() => {
-      CHANGE_HAPPINESS = false;
-      console.log("CHANGE_HAPPINESS: ", CHANGE_HAPPINESS);
-    }, 81000);
+    startVideo(0, 77000);
   }
   if (key == '1') {
-    videos[1].play();
-    selectedVideo = 1;
-    CHANGE_HAPPINESS = true;
-
+    startVideo(1, 110000);
   }
   if (key == '2') {
-    videos[2].play();
-    selectedVideo = 2;
-    CHANGE_HAPPINESS = true;
-
+      startVideo(2, 80000);
+  }
+  if (key == '3') {
+    startVideo(3, 77000);
   }
 
   if (key == 'w') {
@@ -252,7 +270,24 @@ function keyPressed() {
 function startComparaison() {
   if(skeleton.data.default || !CHANGE_HAPPINESS) return;
   difference = compareTwoSkeletons(skeleton, previousSkeleton);//lerp(difference, compareTwoSkeletons(skeleton, previousSkeleton), 0.9);
-  happiness = lerp(happiness, map(difference, 100, 500, 0, 1), 0.05);
+  //happiness = lerp(happiness, map(difference, 100, 400, 0, 1), 0.05);
+  happiness = lerp(happiness, map(difference, 50, 400, 0, 1), 0.05);
   //console.log("Diff between A and B: ", difference);
   previousSkeleton = skeleton;
+}
+
+let timeout;
+function startCountdown(length) {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    CHANGE_HAPPINESS = false;
+    console.log(length + "s ; CHANGE_HAPPINESS: ", CHANGE_HAPPINESS);
+  }, length);
+}
+
+function startVideo(id, length) {
+  videos[id].play();
+  selectedVideo = id;
+  CHANGE_HAPPINESS = true;
+  startCountdown(length);
 }
