@@ -118,6 +118,8 @@ function captureWebcam() {
   }
   
   
+const ignoreParts = ['head', 'data'];
+const legParts = ['legLeft', 'legRight', 'upperLegLeft', 'upperLegRight'];
 
 //the more the same the two skeletons are, the higher the score is
 function compareTwoSkeletons(skeletonA, skeletonB) {
@@ -138,7 +140,9 @@ function compareTwoSkeletons(skeletonA, skeletonB) {
 
   let diff = 0;
   for (let key in skeletonA) {
-    if (key !== "head" && key !== "data") diff += dist(skeletonA[key].p1.x, skeletonA[key].p1.y, skeletonB[key].p1.x, skeletonB[key].p1.y) + dist(skeletonA[key].p2.x, skeletonA[key].p2.y, skeletonB[key].p2.x, skeletonB[key].p2.y);
+    if(ignoreParts.includes(key)) continue;
+    const isLeg = legParts.includes(key);
+    diff += (isLeg ? 0.5 : 1) *(dist(skeletonA[key].p1.x, skeletonA[key].p1.y, skeletonB[key].p1.x, skeletonB[key].p1.y) + dist(skeletonA[key].p2.x, skeletonA[key].p2.y, skeletonB[key].p2.x, skeletonB[key].p2.y));
   }
   return diff;
 }

@@ -7,7 +7,7 @@ let selectedVideo = 0;
 
 let happiness = 0;
 
-const armSize = 1.4;
+const armSize = 1;
 const upperArmSize = 1;
 const lerpSpeed = 0.2;
 
@@ -46,9 +46,10 @@ function draw() {
   //background(0);
   //background(0, 0, 20)
 
-  background(lerpColor(color(0, 0, 20), color(222, 118, 38), happiness));
-  //background(0, 255, 0)
+  //background(lerpColor(color(0, 0, 20), color(222, 118, 38), happiness));
+  background(0, 0, 0)
   noStroke();
+  textAlign(CENTER);
 
 
   if(CAMERA_VIEW) {
@@ -166,33 +167,18 @@ function draw() {
       //   text('☹'/* 'ￗ﹏ￗ' *//* '^o^' */, skeleton.head.pos.x, skeleton.head.pos.y + (skeleton.head.size / 10));
       // }
 
-      if(happiness < 0.2) {
-        textSize(skeleton.head.size * 1.1);
-        text('☹', skeleton.head.pos.x, skeleton.head.pos.y + (skeleton.head.size / 10));
-      }
-      else if(happiness < 0.4) text('>_<', skeleton.head.pos.x, skeleton.head.pos.y);
-      else if(happiness < 0.6) text('0_0', skeleton.head.pos.x, skeleton.head.pos.y);
-      else if(happiness < 0.8) text('0ᴗ0', skeleton.head.pos.x, skeleton.head.pos.y);
-      else(text('^o^', skeleton.head.pos.x, skeleton.head.pos.y));
+
+      text('^o^', skeleton.head.pos.x, skeleton.head.pos.y);
     }
 
     pop();
   
   } //else skeleton = defaultSkeleton();
 
-  textSize(60);
-  //text('Difference: ' + floor(difference), 400, 100);
-  text('Happiness: ' + floor(happiness * 100), 400, 100);
-    
-
-  // Calculate the y position to center the video on the y axis
-  // const videoY = (height - (video.height * VIDEO_SCALE)) / 2;
-  // image(video, 0, videoY, video.width * VIDEO_SCALE, video.height * VIDEO_SCALE, 0, 0, video.width, video.height);
-
+  
   if(selectedVideo !== -1) {
     const VIDEO_SCALE = 0.4;
     let video = videos[selectedVideo];
-    //using the code above, make the video centered on the y axis
     const videoY = (height - (video.height * VIDEO_SCALE)) / 2;
     image(video, 0, videoY, video.width * VIDEO_SCALE, video.height * VIDEO_SCALE, 0, 0, video.width, video.height);
   }
@@ -226,10 +212,7 @@ function keyPressed() {
     videos[0].play();
     selectedVideo = 0;
     CHANGE_HAPPINESS = true;
-    setTimeout(() => {
-      CHANGE_HAPPINESS = false;
-      console.log("CHANGE_HAPPINESS: ", CHANGE_HAPPINESS);
-    }, 81000);
+    startCountdown(77000);
   }
   if (key == '1') {
     videos[1].play();
@@ -252,7 +235,17 @@ function keyPressed() {
 function startComparaison() {
   if(skeleton.data.default || !CHANGE_HAPPINESS) return;
   difference = compareTwoSkeletons(skeleton, previousSkeleton);//lerp(difference, compareTwoSkeletons(skeleton, previousSkeleton), 0.9);
-  happiness = lerp(happiness, map(difference, 100, 500, 0, 1), 0.05);
+  //happiness = lerp(happiness, map(difference, 100, 400, 0, 1), 0.05);
+  happiness = lerp(happiness, map(difference, 50, 400, 0, 1), 0.05);
   //console.log("Diff between A and B: ", difference);
   previousSkeleton = skeleton;
+}
+
+let timeout;
+function startCountdown(length) {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    CHANGE_HAPPINESS = false;
+    console.log(length + "s ; CHANGE_HAPPINESS: ", CHANGE_HAPPINESS);
+  }, length);
 }
