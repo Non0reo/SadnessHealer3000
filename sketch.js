@@ -32,7 +32,7 @@ function setup() {
   fill('white');
 
   // load videos
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     videos[i] = createVideo(['videos/' + i + '.mp4']);
     videos[i].hide();
   }
@@ -197,8 +197,9 @@ function draw() {
   strokeWeight(4);
   rect(width - 150, barHeight, 80, height - barHeight * 2);
 
+
   fill(lerpColor(color(255, 0, 0), color(0, 255, 0), happiness));;
-  rect(width - 150, height - barHeight, 80, barVolume);
+  rect(width - 150 + (happiness > 1 ? random(-10, 10) : 0), height - barHeight + (happiness > 1 ? random(-10, 10) : 0), 80, barVolume);
 
 
 
@@ -249,17 +250,20 @@ function keyPressed() {
   if (key == 'q') {
     CHANGE_HAPPINESS = !CHANGE_HAPPINESS;
   }
-  if (key == '0') {
+  if (key == '0' || key == 'a') {
     startVideo(0, 77000);
   }
-  if (key == '1') {
+  if (key == '1' || key == 'z') {
     startVideo(1, 110000);
   }
-  if (key == '2') {
+  if (key == '2' || key == 'e') {
       startVideo(2, 80000);
   }
-  if (key == '3') {
+  if (key == '3' || key == 'r') {
     startVideo(3, 77000);
+  }
+  if (key == '4' || key == 't') {
+    startVideo(4, 68000);
   }
 
   if (key == 'w') {
